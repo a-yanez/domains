@@ -1,10 +1,79 @@
 ```{r}
 library(readr)
-FIRSTmission_MOD2 <- read_delim("FIRSTmission_MOD2.csv",
-"\t", escape_double = FALSE, col_names = FALSE,
-trim_ws = TRUE)
-View(FIRSTmission_MOD2)
+library(ggplot2)
+library(plyr)
+
+```
+1. Hacer FastOrtho de MIBiG
+Hecho. El resultado está en FASTORTHO/MiBIG.fastortho incluyendo PKS y NRPS. 
+<!--NumGenes vs Familias-->  
+
+2. Hacer Pfam de MIBiG
+Hecho, el archivo MIBIG-Pfam.out contiene el resultado de aplicar PfamScan sobre las secuencias de aminoácidos MIBiG. El archivo  MIBIG-Pfam.out.mod está modificado cambiando espacios por tabuladores para facilitar su manipulación.  
+
+3. Seleccionar las primeras n familias no PKS o NRPS (grep | cut -d ..etc)  
+Después se realizón un filtrado que se guardó en SELECTION.fastortho elimininando NRPS PKS según su anotación en MIBiG. Finalmente el archivo ABUNDANT10.fastortho contiene las 10 familias más abundantes que NO son PKS ni NRPS.   
+
+Para cada familia queremos realizar un boxplot incluyendo datos de # dominios pfam  
+Para ello necesitamos una tabla tipo (Estamos aqui)  
+Gen1_1	#dominio  
+Gen1_2	#dominio  
+
+Donde el primer 1 corresponde a la familia y el segundo digito al numero de gen esa familia  
+```{r tablas}
+FIRSTmission <- read_delim("../OUTPUTS/FIRSTmission", "\t", escape_double = FALSE, col_names = FALSE, trim_ws = TRUE)
+head(FIRSTmission)
+```
+
+Esta tabla tabla la cambiamos para poderla graficar, donde cada renglón es un registro de un gen, la primera columna dice a qué familia pertenece y la segunda columna cuántos dominios tiene.   
+
+```{r tabla2}
+FIRSTmission_MOD2 <- read_delim("FIRSTmission_MOD2.csv", "\t", escape_double = FALSE, col_names = FALSE, trim_ws = TRUE)
+head(FIRSTmission_MOD2)
+```
+
+Ahora sí graficaremos el boxplot de esta tabla en R  
+<!--- PENDIENTES
+1 LA FUNCION POR GEN
+2 EL NUMERO DE GENES POR FAMILIA 
+-->
+  <!--- mision 1 -->
+```{r NumDominiosPorFamilia}
 colnames(FIRSTmission_MOD2)=c("family","domains_number")
 p<-ggplot(FIRSTmission_MOD2,aes(x=family,y=domains_number,group=family))+geom_boxplot()
+p
+```
+
+5. También sería interesante qué dominios son Luego se puede graficar por dominio  
+Eje x dominio uno domino 2 y  
+```{r dominios}
+countDOMAINS <- read_delim("../OUTPUTS/countDOMAINS", "\t", escape_double = FALSE, col_names = FALSE, trim_ws = TRUE)
+head(countDOMAINS)
+```
+
+Dominio1	#Veces en Familia1   
+Dominio1	#Veces en Familia 2   
+….  
+Dominio1	#VecesTotales  
+Dominio2	#VecesFamilia1   
+
+<!--Incidencia de Familias por Dominios-->
+```{r}
+TableDomain <- read_delim("../OUTPUTS/THIRDmission.csv", "\t", escape_double = FALSE, trim_ws = TRUE)
+
+HeadTable<-head(TableDomain,10)
+TailTable<-tail(TableDomain,10)
+#HeadTable<-(DomainName="oligo_HPY")
+HeadTable
+HeadTable[5,1]<-"fam2"
+HeadTable[6,1]<-"fam2"
+HeadTable
+#HeadTable.m<-melt(HeadTable,variable!="TOTAL")
+#TailTable
+#ShortTable<-join(HeadTable,TailTable,by.x = "DomainName",by.y = "DomainName")
+#ShortTable
+cuenta<-count(HeadTable)
+cuenta
+ggplot(HeadTable, aes(x=HeadTable$DomainName,y=HeadTable$Family)) + geom_bar()
 ```
 
