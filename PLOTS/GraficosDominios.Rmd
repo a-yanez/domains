@@ -12,13 +12,18 @@ Hecho. El resultado está en FASTORTHO/MiBIG.fastortho incluyendo PKS y NRPS.
 Hecho, el archivo MIBIG-Pfam.out contiene el resultado de aplicar PfamScan sobre las secuencias de aminoácidos MIBiG. El archivo  MIBIG-Pfam.out.mod está modificado cambiando espacios por tabuladores para facilitar su manipulación.  
 
 3. Seleccionar las primeras n familias no PKS o NRPS (grep | cut -d ..etc)  
-Después se realizón un filtrado que se guardó en SELECTION.fastortho elimininando NRPS PKS según su anotación en MIBiG. Finalmente el archivo ABUNDANT10.fastortho contiene las 10 familias más abundantes que NO son PKS ni NRPS.   
+<!--
+grep -o NRPS |grep -o pKS ????
+Se buscó tanto acrónimo como completo non ribosomal, NRP etc
+-->
+Después se realizó un filtrado que se guardó en SELECTION.fastortho elimininando NRPS PKS según su anotación en MIBiG. Finalmente el archivo ABUNDANT10.fastortho contiene las 10 familias más abundantes que NO son PKS ni NRPS.   
 
 Para cada familia queremos realizar un boxplot incluyendo datos de # dominios pfam  
 Para ello necesitamos una tabla tipo (Estamos aqui)  
 Gen1_1	#dominio  
 Gen1_2	#dominio  
 
+<!--OBJETIVO 1 Familia vs número de dominios-->
 Donde el primer 1 corresponde a la familia y el segundo digito al numero de gen esa familia  
 ```{r tablas}
 FIRSTmission <- read_delim("../OUTPUTS/FIRSTmission", "\t", escape_double = FALSE, col_names = FALSE, trim_ws = TRUE)
@@ -42,13 +47,24 @@ Ahora sí graficaremos el boxplot de esta tabla en R
 colnames(FIRSTmission_MOD2)=c("family","domains_number")
 p<-ggplot(FIRSTmission_MOD2,aes(x=family,y=domains_number,group=family))+geom_boxplot()
 p
-```
 
-5. También sería interesante qué dominios son Luego se puede graficar por dominio  
-Eje x dominio uno domino 2 y  
+## Falta sort families
+```
+<!--- FIN OBJETIVO 1-->
+
+
+<!--- OBJETIVO 2-->
+5. También sería interesante qué dominios son (Luego se puede graficar por dominio  )
+Eje x dominio 1, dominio 2 ...
+Eje y 
+
+
 ```{r dominios}
 countDOMAINS <- read_delim("../OUTPUTS/countDOMAINS", "\t", escape_double = FALSE, col_names = FALSE, trim_ws = TRUE)
 head(countDOMAINS)
+# NumeroFamilia  Nombbre del dominio  #cuantas Veces aparece el dominio por familia
+# Queremos normalizar y por eso necesitamos el numero de genes por familia
+# Medida de ocurrencia de dominios por familia (#dominios)/(#genes en la familia)
 ```
 
 Dominio1	#Veces en Familia1   
@@ -75,5 +91,10 @@ HeadTable
 cuenta<-count(HeadTable)
 cuenta
 ggplot(HeadTable, aes(x=HeadTable$DomainName,y=HeadTable$Family)) + geom_bar()
+
+## Objetivo Contar ocurrencias de dominio por familia y obtener la frecuencia de dominio por familia 
+## Data frame 
+# Dominio Familia OcurrenciaRelativa
+
 ```
 
