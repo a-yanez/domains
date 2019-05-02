@@ -84,6 +84,9 @@ Dominio2	#VecesFamilia1
 <!-- Objetivo 3-->
 <!--Incidencia de Familias por Dominios-->
 ```{r}
+## Objetivo Contar ocurrencias de dominio por familia y obtener la frecuencia de dominio por familia 
+## Data frame 
+# Dominio Familia OcurrenciaRelativa
 
 HeadTable<-head(TableDomain,10)
 HeadTable
@@ -98,10 +101,17 @@ HeadTable
 #TailTable
 #ShortTable<-join(HeadTable,TailTable,by.x = "DomainName",by.y = "DomainName")
 #ShortTable
-DomTable<-count(HeadTable,c("Family","DomainName"))
+DomTable<-count(TableDomain,c("Family","DomainName"))
+#Dominios2<-count(TableDomain,c("Family","DomainName"))
+
 Dominios<-DomTable
 Dominios$freq<-NULL
-Genes=count(HeadTable,c("Family"))
+Genes=count(TableDomain,c("Family"))
+
+#Dominios2<-count(TableDomain,c("Family","DomainName"))
+#Dominios2$freq<-NULL
+Genes=count(TableDomain,c("Family"))
+
 
 ## Funcion que regrese para cada familia y dominio su frecuencia 
 FrecuenciaDominioFamilia<-function(x){
@@ -119,11 +129,8 @@ FrecuenciaDominioFamilia<-function(x){
 
 DomTable$DomFreq<-apply(DomTable,1,FrecuenciaDominioFamilia)
 
-ggplot(DomTable, aes(x=DomTable$DomainName,y=DomTable$DomFreq,fill=DomTable$Family)) +geom_bar(stat = "identity")
+ggplot(DomTable, aes(x=reorder(DomainName,-DomFreq),y=DomTable$DomFreq,fill=DomTable$Family)) +geom_bar(stat = "identity")+  theme(axis.text.x = element_text(angle = 90))
 
-## Objetivo Contar ocurrencias de dominio por familia y obtener la frecuencia de dominio por familia 
-## Data frame 
-# Dominio Familia OcurrenciaRelativa
 
 ```
 
