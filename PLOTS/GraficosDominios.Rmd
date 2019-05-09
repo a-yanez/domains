@@ -35,25 +35,28 @@ Ahora sí graficaremos el boxplot de esta tabla en R
 -->
   <!--- mision 1 -->
 ```{r NumDominiosPorFamilia}
-## Alan hay que entregar la tabla ordenada numéricamente  
-FIRSTmission_MOD4 <- read_delim("FIRSTmission_MOD4.csv", "\t", escape_double = FALSE, col_names = FALSE, trim_ws = TRUE)
-head(FIRSTmission_MOD4)
+## Alan hay que entregar la tabla ordenada numéricamente  para eso puedes utilizar los siguientes comandos
+## perl -p -i -e  's/fam//' file_ordered.csv
+## sort -n file >file_ordered2.csv 
+## perl -p -i -e  's/^/Fam/' file_ordered2.csv
+
+
+### Después escoges 
+file="FIRSTmission_MOD4.csv"
+file = "../OUTPUTS/families16firstmission_ordered2.csv"
+
+
+FIRSTmissionTable <- read_delim(file, "\t", escape_double = FALSE, col_names = FALSE, trim_ws = TRUE)
+head(FIRSTmissionTable)
 #Familia1 numDominios
 #Cada renglón es una ocurrencia de un gen de la familia 1
-colnames(FIRSTmission_MOD4)=c("family","domains_number")
-FIRSTmission_MOD4$Ordenado<-factor(FIRSTmission_MOD4$family, unique(as.character(FIRSTmission_MOD4$family)))
-#factor(FIRSTmission_MOD2$family, as.character(FIRSTmission_MOD2$family))
-## Falta sort families
-#p<-ggplot(FIRSTmission_MOD4,aes(x=Ordenado,y=domains_number,group=family))+geom_boxplot()
-#p
-#p<-ggplot(FIRSTmission_MOD2,aes(x=reorder(family,domains_number,FUN=mean),y=domains_number,fill=family))+geom_boxplot()+geom_jitter(width=0.3,alpha=0.05)  + xlab("family")+coord_flip()
-#p
-#p<-ggplot(FIRSTmission_MOD2,aes(x=family,y=domains_number,fill=family))+geom_boxplot()+geom_jitter(width=0.3,alpha=0.05)  + xlab("family")
-
-#ggplot(FIRSTmission_MOD2,aes(x=family,y=domains_number,fill=family,color=cyl)) + geom_point()+geom_jitter(width=0.3,alpha=0.05)  + xlab("family")
-
-p<-ggplot(FIRSTmission_MOD4,aes(x=Ordenado,y=domains_number,fill=family))+geom_boxplot()+geom_jitter(width=0.3,alpha=0.05)  + xlab("Ordenado")
+colnames(FIRSTmissionTable)=c("family","domains_number")
+FIRSTmissionTable$Ordenado<-factor(FIRSTmissionTable$family, unique(as.character(FIRSTmissionTable$family)))
+p<-ggplot(FIRSTmissionTable,aes(x=Ordenado,y=domains_number,fill=family))+geom_boxplot()+geom_jitter(width=0.3,alpha=0.05)  + xlab("Ordenado")
 p
+p+theme(plot.margin = unit(c(1,1,1.5,1.2),"cm"))
+#ggsave("DomainDistro16only.pdf",plot = g,width=30,height = 15,units = "cm")
+
 ```
 <!--- FIN OBJETIVO 1-->
 
@@ -77,6 +80,20 @@ cuenta2$Orden<-factor(cuenta2$Family, unique(as.character(TableDomain$Family)))
 p <- ggplot(cuenta2, aes(Orden, freq)) + geom_point(size = 0.1) + geom_jitter(aes(colour = DomainName),width=0.4,alpha=0.7,shape = 8)+ theme(legend.position = "none")
 p
 p+ theme(legend.position = "right")
+
+#ggplot(FIRSTmission_MOD2,aes(x=family,y=domains_number,fill=family,color=cyl)) + geom_point()+geom_jitter(width=0.3,alpha=0.05)  + xlab("family")
+
+
+TableDomain <- read_delim("../OUTPUTS/families20thirdmission_MOD.csv", "\t", escape_double = FALSE, trim_ws = TRUE)
+TableDomain$OrdenTD<-factor(TableDomain$Family, unique(as.character(TableDomain$Family)))
+cuenta2<-count(TableDomain,c("Family","Gen","DomainName"))
+cuenta2
+cuenta2$Orden<-factor(cuenta2$Family, unique(as.character(TableDomain$Family)))
+
+h <- ggplot(cuenta2, aes(Orden, freq)) + geom_point(size = 0.1) + geom_jitter(aes(colour = DomainName),width=0.4,alpha=0.7,shape = 8)+ theme(legend.position = "none")
+h
+h+ theme(legend.position = "right")
+ggsave("DomainFreq.pdf",plot = h,width=30,height = 15,units = "cm")
 
 
 ```
